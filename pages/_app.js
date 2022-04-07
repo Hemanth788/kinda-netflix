@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { magic } from "../lib/magic-client";
 import Loading from "../components/loading/loading";
 function MyApp({ Component, pageProps }) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   useEffect(() => {
     const isLoggedIn = async () => {

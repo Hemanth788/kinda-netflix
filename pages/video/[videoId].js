@@ -1,25 +1,24 @@
 import cls from "classnames";
 import { useRouter } from "next/router";
 import Modal from "react-modal";
+import { getYoutubeVideoById } from "../../lib/videos";
 import styles from "../../styles/Video.module.css";
+import NavBar from "../../components/nav/navbar.jsx";
 Modal.setAppElement("#__next");
 
-export default function Video(props) {
+export default function Video({ video }) {
   const router = useRouter();
   const videoId = router.query.videoId;
-  const video = {};
   const {
-    title = "Hi cute dog",
-    publishTime = "1990-01-01",
-    channelTitle = "Paramount Pictures",
-    viewCount = 100000,
-    description = ` Heroes don’t get any bigger. Check out the new trailer for Clifford the Big Red Dog, hitting theatres and Paramount+ on November 10. #CliffordMovie
-🐾. When middle-schooler Emily Elizabeth (Darby Camp) meets a magical animal rescuer (John Cleese) who gifts her a little, red puppy, she never anticipated waking up to find a giant ten-foot hound in her small New York City apartment. While her single mom (Sienna Guillory) is away for business, Emily and her fun but impulsive uncle Casey (Jack Whitehall) set out on an adventure that will keep you on the edge-of-your-seat as our heroes take a bite out of the Big Apple. Based on the beloved Scholastic book character, Clifford will teach the world how to love big!Heroes don’t get any bigger. Check out the new trailer for Clifford the Big Red Dog, hitting theatres and Paramount+ on November 10. #CliffordMovie
-🐾. When middle-schooler Emily Elizabeth (Darby Camp) meets a magical animal rescuer (John Cleese) who gifts her a little, red puppy, she never anticipated waking up to find a giant ten-foot hound in her small New York City apartment. While her single mom (Sienna Guillory) is away for business, Emily and her fun but impulsive uncle Casey (Jack Whitehall) set out on an adventure that will keep you on the edge-of-your-seat as our heroes take a bite out of the Big Apple. Based on the beloved Scholastic book character, Clifford will teach the world how to love big!Heroes don’t get any bigger. Check out the new trailer for Clifford the Big Red Dog, hitting theatres and Paramount+ on November 10. #CliffordMovie
-🐾. When middle-schooler Emily Elizabeth (Darby Camp) meets a magical animal rescuer (John Cleese) who gifts her a little, red puppy, she never anticipated waking up to find a giant ten-foot hound in her small New York City apartment. While her single mom (Sienna Guillory) is away for business, Emily and her fun but impulsive uncle Casey (Jack Whitehall) set out on an adventure that will keep you on the edge-of-your-seat as our heroes take a bite out of the Big Apple. Based on the beloved Scholastic book character, Clifford will teach the world how to love big!`,
+    title,
+    publishTime,
+    channelTitle,
+    statistics: { viewCount },
+    description,
   } = video;
   return (
     <div className={styles.container}>
+      <NavBar />
       <Modal
         className={styles.modal}
         isOpen={true}
@@ -60,4 +59,34 @@ export default function Video(props) {
       </Modal>
     </div>
   );
+}
+
+export async function getStaticProps({ params }) {
+  // const video = {
+  //   title: "Hi cute dog",
+  //   publishTime: "1990-01-01",
+  //   channelTitle: "Paramount Pictures",
+  //   viewCount: 100000,
+  //   description: ` Heroes don’t get any bigger. Check out the new trailer for Clifford the Big Red Dog, hitting theatres and Paramount+ on November 10. #CliffordMovie`,
+  // };
+  console.log("params", params);
+  const videoId = params.videoId;
+  const videoArray = await getYoutubeVideoById(videoId);
+  console.log("videoArray", videoArray);
+  return {
+    props: {
+      video: videoArray.length > 0 ? videoArray[0] : {},
+    },
+
+    revalidate: 10,
+  };
+}
+
+export async function getStaticPaths() {
+  const listOfVideoIds = ["mYfJxlgR2jw", "4zH5iYM4wJo", "KCPEHsAViiQ"];
+  const paths = listOfVideoIds.map((videoId) => ({
+    params: { videoId },
+  }));
+
+  return { paths, fallback: "blocking" };
 }

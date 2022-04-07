@@ -8,11 +8,15 @@ export default function SectionCards(props) {
       <h2 className={styles.title}>{title}</h2>
       <div className={styles.cardWrapper}>
         {videos &&
-          videos.map((item, index) => (
-            // <Link key={index} href={`/video/${videoId}`} passHref={true}>
-            <Card id={index} imgUrl={item.imgUrl} size={size} />
-            // </Link>
-          ))}
+          videos.map((item, index) => {
+            return (
+              <Link key={index} href={`/video/${item.id}`} passHref={true}>
+                <a>
+                  <Card id={index} imgUrl={item.imgUrl} size={size} />
+                </a>
+              </Link>
+            );
+          })}
       </div>
     </section>
   );
